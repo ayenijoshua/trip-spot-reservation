@@ -5,26 +5,52 @@ use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\DB;
 
-class ReservationRepository extends EloquentRepository implements RepositoryInterface
+class ReservationRepository implements RepositoryInterface
 {
-    public $reservation;
-
-    public function __construct(Reservation $reservation)
+    public function all()
     {
-        parent::__construct($reservation);
-        $this->reservation = $reservation;
+        $sql = "SELECT reservations.id as reserve_id, reservations.slots, users.name, trips.name as trip_name
+        FROM reservations 
+        LEFT JOIN users on reservations.user_id = users.id
+        LEFT JOIN trips on reservations.trip_id = trips.id
+        GROUP BY users.name";
+        $results = DB::select($sql);
+        return $results;
     }
 
-    /**
-     * get role instance
-     */
-    public function getModel(){
-        return $this->reservation;
+    public function get($id)
+    {
+        $sql = "SELECT reservations.id as reserve_id, reservations.slots, users.name, trips.name as trip_name
+        FROM reservations 
+        LEFT JOIN users on reservations.user_id = users.id
+        LEFT JOIN trips on reservations.trip_id = trips.id
+        WHERE reserve_id = ?
+        GROUP BY users.name";
+        $results = DB::select($sql,[$id]);
+        return $results;
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM reservations
+        WHERE id = ?";
+        $results = DB::select($sql,[$id]);
+        return $results;
     }
 
     public function create(array $data)
     {
-        $this->reservation->create($data);
+        $sql = "INSERT INTO reservations (`trip_id`,`user_id`,`slots`) VALUES (?,?,?)";
+        $results = DB::select($sql,[$data['trip_id'],$data['user_id'],$data['slots']]);
+        return $results;
+    }
+
+    public function update($user_id,$slots)
+    {
+        $sql = "UPDATE reservations SET slots = ? 
+        WHERE `user_id` = ?";
+        $results = DB::select($sql,$slots,$user_id);
+        return $results;
     }
 
     public function tripHasAvailableSlots($trip_id,$slot_request)
@@ -74,7 +100,7 @@ class ReservationRepository extends EloquentRepository implements RepositoryInte
     public function cancleReservations($trip_id,$user_id,$slot)
     {
         $query = "UPDATE reservations
-        SET (slots) VALUES (?)
+        SET slots = ?
         WHERE trip_id = ? AND reservations.user_id = ?";
         $results = DB::select($query,[$slot,$trip_id,$user_id]);
         return $results;

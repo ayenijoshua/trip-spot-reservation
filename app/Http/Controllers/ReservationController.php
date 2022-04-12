@@ -9,9 +9,8 @@ class ReservationController extends Controller
 {
      function __construct(ReservationRepository $reservation)
      {
-         $this->reservation = $reservation;
+        $this->reservation = $reservation;
      }
-    //
 
     public function create(Request $request)
     {
@@ -23,12 +22,20 @@ class ReservationController extends Controller
 
         $trip_id = $request->trip_id;
         $slot_request = $request->slots;
+        $user_id = $request->user_id;
 
         try {
-            if(! $this->reservation->tripHasAvailableSlots($trip_id,$slot_request)){
+            $reserved_spots = $this->reservation->reservedSpots($user_id,$trip_id);
+            $newSpots = $reserved_spots + $slot_request;
+
+            if(! $this->reservation->tripHasAvailableSlots($trip_id, $newSpots)){
                 $availale_slots = $this->reservation->slotDetails($trip_id)['available_slots'];
                 return response(['message'=>"Error, there are $availale_slots available"]);
             }
+
+            $reserved_spots == 0 
+            ?  $this->reservation->create($request->all())
+            :  $this->reservation->update($user_id,$newSpots);
     
             $this->reservation->create($request->all());
             $message = $request->slots.' slots reserved successfully';
