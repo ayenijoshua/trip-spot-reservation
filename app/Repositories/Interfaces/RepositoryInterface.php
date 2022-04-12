@@ -22,7 +22,7 @@ interface RepositoryInterface {
     /**
      * update a model
      */
-    public function update($model, array $data);
+    public function update(array $data);
 
     /**
      * delete a model

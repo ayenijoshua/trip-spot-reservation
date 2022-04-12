@@ -35,9 +35,9 @@ class ReservationController extends Controller
 
             $reserved_spots == 0 
             ?  $this->reservation->create($request->all())
-            :  $this->reservation->update($user_id,$newSpots);
+            :  $this->reservation->update(['user_id'=>$user_id,'slots'=>$newSpots]);
     
-            $this->reservation->create($request->all());
+            //$this->reservation->create($request->all());
             $message = $request->slots.' slots reserved successfully';
             return response(['message'=>$message]);
         } catch (\Exception $e) {

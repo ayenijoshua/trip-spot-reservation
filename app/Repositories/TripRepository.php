@@ -3,27 +3,61 @@ namespace App\Repositories;
 
 use App\Repositories\Interfaces\RepositoryInterface;
 use App\Models\Trip;
+use Illuminate\Support\Facades\DB;
 
-class TripRepository extends EloquentRepository implements RepositoryInterface
+class TripRepository implements RepositoryInterface
 {
-    public $trip;
+    // public $trip;
 
-    public function __construct(Trip $trip)
+    // public function __construct(Trip $trip)
+    // {
+    //     parent::__construct($trip);
+    //     $this->trip = $trip;
+    // }
+
+    // /**
+    //  * get role instance
+    //  */
+    // public function getModel(){
+    //     return $this->trip;
+    // }
+
+    public function create($data)
     {
-        parent::__construct($trip);
-        $this->trip = $trip;
+        $sql = "INSERT INTO trips (`name`,`allocated_slots`) VALUES (?,?)";
+        $results = DB::select($sql,[$data['name'],$data['allocated_slots']]);
+        return $results;
     }
 
-    /**
-     * get role instance
-     */
-    public function getModel(){
-        return $this->trip;
+    public function update($data)
+    {
+        $sql = "UPDATE trips SET `name` = ? , allocated_slots = ?
+        WHERE `id` = ?";
+        $results = DB::select($sql,[$data['name'],$data['slots']]);
+        return $results;
     }
 
-    public function create(array $data)
+    public function all()
     {
-        return $this->trip->create($data);
+        $sql = "SELECT * FROM trips";
+        $results = DB::select($sql);
+        return $results;
+    }
+
+    public function get($id)
+    {
+        $sql = "SELECT * FROM trips 
+        WHERE id = ?";
+        $results = DB::select($sql,[$id]);
+        return $results;
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM trips
+        WHERE id = ?";
+        $results = DB::select($sql,[$id]);
+        return $results;
     }
 
     

@@ -15,7 +15,9 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'user_id' => null,
+            'trip_id' => null,
+            'slots' => null
         ];
     }
 

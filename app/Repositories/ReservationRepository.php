@@ -45,11 +45,11 @@ class ReservationRepository implements RepositoryInterface
         return $results;
     }
 
-    public function update($user_id,$slots)
+    public function update($data)
     {
         $sql = "UPDATE reservations SET slots = ? 
         WHERE `user_id` = ?";
-        $results = DB::select($sql,$slots,$user_id);
+        $results = DB::select($sql,[$data['slots'],$data['user_id']]);
         return $results;
     }
 
