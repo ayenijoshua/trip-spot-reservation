@@ -12,6 +12,18 @@ class ReservationController extends Controller
         $this->reservation = $reservation;
      }
 
+     public function all()
+     {
+         try {
+             $reserves = $this->reservation->all();
+
+             return response(['data'=>$reserves,'message'=>'reservations fetched successfully']);
+         } catch (\Exception $e) {
+             info($e);
+             return response(['message'=>'An error occured'],500);
+         }
+     }
+
     public function create(Request $request)
     {
         $request->validate([

@@ -13,6 +13,18 @@ class UserController extends Controller
         $this->user = $user;
     }
 
+    public function all()
+     {
+         try {
+             $users = $this->user->all();
+
+             return response(['data'=>$users,'message'=>'users fetched successfully']);
+         } catch (\Exception $e) {
+             info($e);
+             return response(['message'=>'An error occured'],500);
+         }
+     }
+
 
     public function create(Request $request)
     {
@@ -44,9 +56,19 @@ class UserController extends Controller
         }
     }
 
-    public function show()
+    public function show($id)
     {
-        
+        try {
+            $user = $this->user->get($id);
+            if(!$user){
+                return response(['message'=>'user not found'],404);
+            }
+
+            return response(['data'=>$user,'message'=>'user retrieved successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+        }
     }
 
     public function delete($id)
@@ -55,7 +77,7 @@ class UserController extends Controller
             $this->user->delete($id);
 
             return response(['message'=>'User deleted successfully']);
-            
+
         } catch (\Exception $e) {
             info($e);
             return response(['message'=>'An error occured'],500);

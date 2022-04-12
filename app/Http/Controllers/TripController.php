@@ -11,6 +11,18 @@ class TripController extends Controller
     {
         $this->trip = $trip;
     }
+
+    public function all()
+     {
+         try {
+             $trips = $this->trip->all();
+
+             return response(['data'=>$trips,'message'=>'trips fetched successfully']);
+         } catch (\Exception $e) {
+             info($e);
+             return response(['message'=>'An error occured'],500);
+         }
+     }
     
     public function create(Request $request)
     {
@@ -22,13 +34,14 @@ class TripController extends Controller
         try {
             $this->trip->create($request->all());
             return response(['message'=>'Trip created successfully']);
+
         } catch (\Exception $e) {
             info($e);
             return response(['message'=>'An error occured'],500);
         }
     }
 
-    public function update(Request $request)
+    public function update(Request $request,$id)
     {
         $request->validate([
             'name'=>'required',
@@ -36,8 +49,10 @@ class TripController extends Controller
         ]);
 
         try {
-            $this->trip->update($request->all());
-            
+            $data = ['id'=>$id,'name'=>$request->name,'slots'=>$request->allocated_slots];
+
+            $this->trip->update($data);
+
             return response(['message'=>'Trip updated successfully']);
 
         } catch (\Exception $e) {
@@ -46,9 +61,20 @@ class TripController extends Controller
         }
     }
 
-    public function show()
+    public function show($id)
     {
-        
+        try {
+            $trip = $this->trip->get($id);
+            
+            if(! $trip){
+                return response(['message'=>'Trip not found'],404);
+            }
+
+            return response(['data'=>$trip,'message'=>'Trip retrieved successfully']);
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
     }
 
     public function delete($id)

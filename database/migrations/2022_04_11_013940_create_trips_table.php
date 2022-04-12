@@ -17,7 +17,6 @@ class CreateTripsTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('allocated_slots');
-            $table->integer('available_slots');
             $table->timestamps();
         });
     }
