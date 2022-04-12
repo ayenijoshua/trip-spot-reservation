@@ -33,7 +33,7 @@ class UserRepository implements RepositoryInterface
     {
         $sql = "UPDATE users SET `name` = ?
         WHERE `id` = ?";
-        $results = DB::select($sql,[$data['name']]);
+        $results = DB::select($sql,[$data['name'], $data['id']]);
         return $results;
     }
 

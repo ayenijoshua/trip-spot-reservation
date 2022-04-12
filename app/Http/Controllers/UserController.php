@@ -46,9 +46,11 @@ class UserController extends Controller
         $request->validate(['name'=>'required|unique:users,name']);
 
         try {
-            $this->user->update($request->all());
+            $data = ['name'=>$request->name,'id'=>$request->id];
 
-            return response(['message'=>'user created successfully']);
+            $this->user->update($data);
+
+            return response(['message'=>'user updated successfully']);
 
         } catch (\Exception $e) {
             info($e);

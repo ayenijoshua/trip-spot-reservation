@@ -20,12 +20,12 @@ use App\Http\Controllers\UserController;
 //     return $request->user();
 // });
 
-Route::controller(TripController::class)->group(function () {
-    Route::get('/trips/{id}', 'show');
-    Route::post('/trips', 'create');
-    Route::put('/trips/{id}', 'update');
-    Route::delete('/trips/{id}', 'delete');
-    Route::get('/trips', 'all');
+Route::controller(TripController::class)->prefix('trips')->group(function () {
+    Route::get('/{id}', 'show');
+    Route::post('/', 'create');
+    Route::put('/{id}', 'update');
+    Route::delete('/{id}', 'delete');
+    Route::get('/', 'all');
 });
 
 Route::controller(ReservationController::class)->prefix('reservations')->group(function () {
@@ -35,9 +35,10 @@ Route::controller(ReservationController::class)->prefix('reservations')->group(f
     Route::get('/', 'all');
 });
 
-Route::controller(UserController::class)->prefix('reservations')->group(function () {
+Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::post('/', 'create');
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
     Route::get('/', 'all');
+    Route::get('/{id}', 'show');
 });
