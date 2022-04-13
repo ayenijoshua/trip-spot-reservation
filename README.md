@@ -92,8 +92,7 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
 ```
     curl --location --request DELETE 'http://localhost/api/users/{id}' \
     --header 'Content-Type: application/json' \
-``
-
+```
 ## All Reservations
 ```bash
     curl --location --request GET 'http://localhost/api/reservations' \
