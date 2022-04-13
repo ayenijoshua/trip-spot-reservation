@@ -33,7 +33,7 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
         "allocated_slots":10
     }'
 ```
-# Update Trips
+## Update Trips
 ```bash
     curl --location --request PUT 'http://localhost/api/trips/{id}' \
     --header 'Content-Type: application/json' \
@@ -42,65 +42,65 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
         "allocated_slots":10
     }'
 ```
-# Trip reservations
-``
+## Trip reservations
+```bash
     curl --location --request GET 'http://localhost/api/trips/{id}/reservations' \
     --header 'Content-Type: application/json' \
-``
-# Total Trip reservations
-``
+```
+## Total Trip reservations
+```bash
     curl --location --request GET 'http://localhost/api/trips/{id}/total-reservations' \
     --header 'Content-Type: application/json' \
-``
+```
 # Delete Trips
-``
+```bash
     curl --location --request DELETE 'http://localhost/api/trips/{id}' \
     --header 'Content-Type: application/json' \
-``
-# All Users
-``
+```
+## All Users
+```bash
     curl --location --request GET 'http://localhost/api/users' \
     --header 'Content-Type: application/json' \
-``
-# Create User
-``
+```
+## Create User
+```bash
     curl --location --request POST 'http://localhost/api/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "name": "James",
     }'
-``
-# Update User
-``
+```
+## Update User
+```bash
     curl --location --request PUT 'http://localhost/api/users/{id}' \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "name": "Josh",
     }'
-``
-# User reservations
-``
+```
+## User reservations
+```bash
     curl --location --request GET 'http://localhost/api/users/{id}/reservations' \
     --header 'Content-Type: application/json' \
-``
-# Total User reservations
-``
+```
+## Total User reservations
+```bash
     curl --location --request GET 'http://localhost/api/users/{id}/total-reservations' \
     --header 'Content-Type: application/json' \
-``
-# Delete Users
-``
+```
+## Delete Users
+```
     curl --location --request DELETE 'http://localhost/api/users/{id}' \
     --header 'Content-Type: application/json' \
 ``
 
-# All Reservations
-``
+## All Reservations
+```bash
     curl --location --request GET 'http://localhost/api/reservations' \
     --header 'Content-Type: application/json' \
-``
-# Create Reservations
-``
+```
+## Create Reservations
+```bash
     curl --location --request POST 'http://localhost/api/reservations' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -108,10 +108,10 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
         "user_id":1,
         "slots":2
     }'
-``
+```
 
-# Cancle Reservation
-``
+## Cancle Reservation
+```bash
     curl --location --request PUT 'http://localhost/api/reservations/canclation' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -119,11 +119,11 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
         "user_id":1,
         "slots":2
     }'
-``
-# Delete Reservations
-``
+```
+## Delete Reservations
+```bash
     curl --location --request DELETE 'http://localhost/api/reservations/{id}' \
     --header 'Content-Type: application/json' \
-``
+```
 
 
