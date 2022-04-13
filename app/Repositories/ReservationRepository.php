@@ -9,7 +9,7 @@ class ReservationRepository implements RepositoryInterface
 {
     public function all()
     {
-        $sql = "SELECT reservations.id as reserve_id, reservations.slots, users.name, trips.name as trip_name
+        $sql = "SELECT users.name, trips.name as trip_name, reservations.id as reserve_id, reservations.slots
         FROM reservations 
         LEFT JOIN users on reservations.user_id = users.id
         LEFT JOIN trips on reservations.trip_id = trips.id";
