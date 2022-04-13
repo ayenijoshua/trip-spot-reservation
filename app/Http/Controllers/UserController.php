@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -28,8 +29,12 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
-        $request->validate(['name'=>'required']);
+        $v = Validator::make($request->all(),['name'=>'required']);
 
+        if($v->fails()){
+            return response()->json(['message'=>$v->messages()],422);
+        }
+        
         try {
             $this->user->create($request->all());
 
@@ -43,7 +48,11 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate(['name'=>'required|unique:users,name']);
+        $v = Validator::make($request->all(),['name'=>'required|unique:users,name']);
+
+        if($v->fails()){
+            return response()->json(['message'=>$v->messages()],422);
+        }
 
         try {
             $data = ['name'=>$request->name,'id'=>$request->id];

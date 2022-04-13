@@ -59,7 +59,17 @@ class ReservationRepository implements RepositoryInterface
         if(count($results) > 0 && !property_exists($results[0],'available_slots')){
             return false;
         }
-        if($results[0]->available_slots >= $slot_request){
+        if($results[0]->available_slots > $slot_request){
+            return true;
+        }
+        return false;
+    }
+
+    public function tripHasReservation($trip_id)
+    {
+        $query = "SELECT SUM('reservations.slots') as reservation FROM reservations WHERE trip_id = ?";
+        $results = DB::select($query,[$trip_id]);
+        if(count($results) > 0 && property_exists($results[0],'reservation')){
             return true;
         }
         return false;
@@ -69,12 +79,13 @@ class ReservationRepository implements RepositoryInterface
     {
         $query = "SELECT (trips.allocated_slots - (SELECT SUM(reservations.slots) FROM reservations WHERE trip_id = ?) ) as available_slots, trips.allocated_slots
         FROM trips WHERE trips.id = $trip_id";
+        
         $results = DB::select($query,[$trip_id]);
         //info($results[0]->available_slots);
         if(count($results) > 0 && ! property_exists($results[0],'available_slots')){
             return ['available_slots'=> 0];
         }
-        return ['available_slots'=> $results[0]->available_slots ?? 0];
+        return ['available_slots'=> $results[0]->available_slots];
     }
 
     public function userHasReservations($user_id,$trip_id)

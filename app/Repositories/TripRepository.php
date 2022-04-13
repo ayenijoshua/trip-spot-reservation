@@ -32,7 +32,10 @@ class TripRepository implements RepositoryInterface
 
     public function get($id)
     {
-        $sql = "SELECT * FROM trips 
+        $sql = "SELECT trips.name, trips.allocated_slots, 
+        (trips.allocated_slots - (SELECT SUM(reservations.slots) FROM reservations WHERE trip_id = $id)) as available_slots,
+        (SELECT SUM(reservations.slots) FROM reservations WHERE trip_id = $id) as reserved_slots
+        FROM trips 
         WHERE id = ?";
         $results = DB::select($sql,[$id]);
         return $results;
@@ -50,7 +53,7 @@ class TripRepository implements RepositoryInterface
     {
         $query = "SELECT SUM(reservations.slots) as total FROM reservations WHERE trip_id = ?";
         $results = DB::select($query,[$trip_id]);
-        if(count($results) > 0 && ! property_exists($results[0],'total')){
+        if(count($results) > 0 && property_exists($results[0],'total')){
             return $results[0]->total;
         }
         return 0;

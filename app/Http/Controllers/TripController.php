@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\TripRepository;
+use Illuminate\Support\Facades\Validator;
 
 class TripController extends Controller
 {
@@ -26,10 +27,14 @@ class TripController extends Controller
     
     public function create(Request $request)
     {
-        $request->validate([
-            'name'=>'required',
-            'allocated_slots'=> 'required|numeric'
+        $v = Validator::make($request->all(),[
+            'name'=>'required|unique:trips,name',
+            'allocated_slots'=> 'required|numeric|min:1'
         ]);
+
+        if($v->fails()){
+            return response()->json(['message'=>$v->messages()],422);
+        }
 
         try {
             $this->trip->create($request->all());
@@ -43,12 +48,22 @@ class TripController extends Controller
 
     public function update(Request $request,$id)
     {
-        $request->validate([
+        $v = Validator::make($request->all(),[
             'name'=>'required',
-            'allocated_slots'=> 'required|numeric'
+            'allocated_slots'=> 'required|numeric|min:1'
         ]);
 
+        if($v->fails()){
+            return response()->json(['message'=>$v->messages()],422);
+        }
+
         try {
+            $trip = $this->trip->get($id);
+            
+            if(! $trip){
+                return response()->json(['message'=>'Trip not found'],404);
+            }
+
             $data = ['id'=>$id,'name'=>$request->name,'slots'=>$request->allocated_slots];
 
             $this->trip->update($data);
