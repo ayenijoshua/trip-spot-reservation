@@ -17,7 +17,7 @@ class CreateReservationsTable extends Migration
             $table->id();
             $table->integer('trip_id')->references('id')->on('trips');
             $table->integer('user_id')->references('id')->on('users');
-            $table->integer('reservation');
+            $table->integer('slots');
             //$table->integer('cencellation');
             $table->timestamps();
         });

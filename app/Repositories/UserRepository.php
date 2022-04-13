@@ -59,4 +59,24 @@ class UserRepository implements RepositoryInterface
         $results = DB::select($sql,[$id]);
         return $results;
     }
+    public function totalReservations($id)
+    {
+        $query = "SELECT SUM(reservations.slots) as total FROM reservations WHERE `user_id` = ?";
+        $results = DB::select($query,[$id]);
+        if(count($results) > 0 && ! property_exists($results[0],'total')){
+            return $results[0]->total;
+        }
+        return 0;
+    }
+
+    public function reservations($id)
+    {
+        $query = "SELECT trips.name as trip_name, users.name as user, reservations.id as reserve_id, reservations.slots 
+        FROM reservations 
+        LEFT JOIN users on reservations.user_id = users.id
+        LEFT JOIN trips on reservations.trip_id = trips.id
+        WHERE reservations.user_id = ?";
+        $results = DB::select($query,[$id]);
+        return $results;
+    }
 }

@@ -12,8 +12,7 @@ class ReservationRepository implements RepositoryInterface
         $sql = "SELECT reservations.id as reserve_id, reservations.slots, users.name, trips.name as trip_name
         FROM reservations 
         LEFT JOIN users on reservations.user_id = users.id
-        LEFT JOIN trips on reservations.trip_id = trips.id
-        GROUP BY users.name";
+        LEFT JOIN trips on reservations.trip_id = trips.id";
         $results = DB::select($sql);
         return $results;
     }
@@ -24,8 +23,7 @@ class ReservationRepository implements RepositoryInterface
         FROM reservations 
         LEFT JOIN users on reservations.user_id = users.id
         LEFT JOIN trips on reservations.trip_id = trips.id
-        WHERE reserve_id = ?
-        GROUP BY users.name";
+        WHERE reservations.id = ?";
         $results = DB::select($sql,[$id]);
         return $results;
     }
@@ -55,12 +53,13 @@ class ReservationRepository implements RepositoryInterface
 
     public function tripHasAvailableSlots($trip_id,$slot_request)
     {
-        $query = "SELECT (trips.allocated_slots - SUM('reservations.slots')) as available_slots, trips.allocated_slots
-        FROM reservations
-        LEFT JOIN trips on trips.id = reservations.trip_id
-        WHERE trips.id = ?";
+        $query = "SELECT (trips.allocated_slots - (SELECT SUM('reservations.slots') FROM reservations WHERE trip_id = ?) ) as available_slots, trips.allocated_slots
+        FROM trips WHERE trips.id = $trip_id";
         $results = DB::select($query,[$trip_id]);
-        if($results['available_slots'] >= $slot_request){
+        if(count($results) > 0 && !property_exists($results[0],'available_slots')){
+            return false;
+        }
+        if($results[0]->available_slots >= $slot_request){
             return true;
         }
         return false;
@@ -68,12 +67,14 @@ class ReservationRepository implements RepositoryInterface
 
     public function slotDetails($trip_id)
     {
-        $query = "SELECT (trips.allocated_slots - SUM('reservations.slots')) as available_slots, trips.allocated_slots
-        FROM reservations
-        LEFT JOIN trips on trips.id = reservations.trip_id
-        WHERE trips.id = ?";
+        $query = "SELECT (trips.allocated_slots - (SELECT SUM(reservations.slots) FROM reservations WHERE trip_id = ?) ) as available_slots, trips.allocated_slots
+        FROM trips WHERE trips.id = $trip_id";
         $results = DB::select($query,[$trip_id]);
-        return $results;
+        //info($results[0]->available_slots);
+        if(count($results) > 0 && ! property_exists($results[0],'available_slots')){
+            return ['available_slots'=> 0];
+        }
+        return ['available_slots'=> $results[0]->available_slots ?? 0];
     }
 
     public function userHasReservations($user_id,$trip_id)
@@ -82,8 +83,11 @@ class ReservationRepository implements RepositoryInterface
         FROM reservations
         WHERE trip_id = ? AND reservations.user_id = ?";
         $results = DB::select($query,[$trip_id,$user_id]);
-        if($results['spots'] > 0){
-            return true;
+        if(count($results) > 0 && property_exists($results[0],'spots')){
+            if($results[0]->spots > 0){
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -94,7 +98,8 @@ class ReservationRepository implements RepositoryInterface
         FROM reservations
         WHERE trip_id = ? AND reservations.user_id = ?";
         $results = DB::select($query,[$trip_id,$user_id]);
-        return $results['spots'];
+        info($results);
+        return  count($results) > 0 && property_exists($results[0],'spots') ? $results[0]->spots : 0;
     }
 
     public function cancleReservations($trip_id,$user_id,$slot)

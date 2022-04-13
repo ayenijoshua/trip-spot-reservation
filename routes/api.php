@@ -26,13 +26,16 @@ Route::controller(TripController::class)->prefix('trips')->group(function () {
     Route::put('/{id}', 'update');
     Route::delete('/{id}', 'delete');
     Route::get('/', 'all');
+    Route::get('/{id}/total-reservations', 'totalReservations');
+    Route::get('/{id}/reservations', 'reservations');
 });
 
 Route::controller(ReservationController::class)->prefix('reservations')->group(function () {
     Route::post('/', 'create');
-    //Route::put('/', 'update');
+    Route::put('/canclation', 'cancle');
     Route::delete('/{id}', 'delete');
     Route::get('/', 'all');
+    Route::get('/{id}', 'show');
 });
 
 Route::controller(UserController::class)->prefix('users')->group(function () {
@@ -41,4 +44,6 @@ Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::delete('/{id}', 'delete');
     Route::get('/', 'all');
     Route::get('/{id}', 'show');
+    Route::get('/{id}/total-reservations', 'totalReservations');
+    Route::get('/{id}/reservations', 'reservations');
 });

@@ -85,4 +85,40 @@ class UserController extends Controller
             return response(['message'=>'An error occured'],500);
         }
     }
+
+    public function totalReservations($id)
+    {
+        try {
+
+            if(!$this->user->get($id)){
+                return response(['message'=>'User not found'],404);
+            }
+
+            $total = $this->user->totalReservations($id);
+
+            return response(['data'=>$total,'message'=>'Total user reservation fetched successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
+
+    public function reservations($id)
+    {
+        try {
+
+            if(!$this->user->get($id)){
+                return response(['message'=>'User not found'],404);
+            }
+
+            $reservations = $this->user->reservations($id);
+
+            return response(['data'=>$reservations,'message'=>'User reservation fetched successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
 }

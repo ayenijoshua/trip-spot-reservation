@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Trip;
+use App\Models\User;
+use App\Models\Reservation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TripTest extends TestCase
@@ -101,5 +103,30 @@ class TripTest extends TestCase
 
         $response->assertNotFound();
         $response->assertJsonStructure(['message']);
+    }
+
+    public function test_get_all_reservation()
+    {
+        $trip = Trip::factory()->create();
+        $users = User::factory()->count(5)->create();
+
+        Reservation::factory()->create(['trip_id'=>$trip->id,'user_id'=>$users[0]->id,'slots'=>2]);
+        Reservation::factory()->create(['trip_id'=>$trip->id,'user_id'=>$users[1]->id,'slots'=>3]);
+        Reservation::factory()->create(['trip_id'=>$trip->id,'user_id'=>$users[2]->id,'slots'=>2]);
+        Reservation::factory()->create(['trip_id'=>$trip->id,'user_id'=>$users[3]->id,'slots'=>2]);
+        Reservation::factory()->create(['trip_id'=>$trip->id,'user_id'=>$users[4]->id,'slots'=>1]);
+
+        $response = $this->getJson("/api/trips/{$trip->id}/reservations");
+
+        $response1 = $this->getJson("/api/trips/{$trip->id}/total-reservations");
+
+        $response->assertOk();
+        $response->assertJsonStructure(['data','message']);
+        $this->assertDatabaseCount('reservations',5);
+
+        $total = (new \App\Repositories\TripRepository)->totalReservations($trip->id);
+
+        $response1->assertOk();
+        $response1->assertExactJson(['data'=>$total, 'message'=>'Total trip reservation fetched successfully']);
     }
 }

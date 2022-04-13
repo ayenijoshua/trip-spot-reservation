@@ -89,4 +89,40 @@ class TripController extends Controller
             return response(['message'=>'An error occured'],500);
         }
     }
+
+    public function totalReservations($id)
+    {
+        try {
+
+            if(!$this->trip->get($id)){
+                return response(['message'=>'Trip not found'],404);
+            }
+
+            $total = $this->trip->totalReservations($id);
+
+            return response(['data'=>$total,'message'=>'Total trip reservation fetched successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
+
+    public function reservations($id)
+    {
+        try {
+
+            if(!$this->trip->get($id)){
+                return response(['message'=>'Trip not found'],404);
+            }
+
+            $reservations = $this->trip->reservations($id);
+
+            return response(['data'=>$reservations,'message'=>'Trip reservation fetched successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
 }

@@ -46,5 +46,26 @@ class TripRepository implements RepositoryInterface
         return $results;
     }
 
+    public function totalReservations($trip_id)
+    {
+        $query = "SELECT SUM(reservations.slots) as total FROM reservations WHERE trip_id = ?";
+        $results = DB::select($query,[$trip_id]);
+        if(count($results) > 0 && ! property_exists($results[0],'total')){
+            return $results[0]->total;
+        }
+        return 0;
+    }
+
+    public function reservations($trip_id)
+    {
+        $query = "SELECT trips.name as trip_name, users.name as user, reservations.id as reserve_id, reservations.slots 
+        FROM reservations 
+        LEFT JOIN users on reservations.user_id = users.id
+        LEFT JOIN trips on reservations.trip_id = trips.id
+        WHERE reservations.trip_id = ?";
+        $results = DB::select($query,[$trip_id]);
+        return $results;
+    }
+
     
 }

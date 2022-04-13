@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\ReservationRepository;
+use phpDocumentor\Reflection\Types\This;
 
 class ReservationController extends Controller
 {
@@ -12,24 +13,41 @@ class ReservationController extends Controller
         $this->reservation = $reservation;
      }
 
-     public function all()
-     {
-         try {
-             $reserves = $this->reservation->all();
+    public function all()
+    {
+        try {
+            $reserves = $this->reservation->all();
 
-             return response(['data'=>$reserves,'message'=>'reservations fetched successfully']);
-         } catch (\Exception $e) {
-             info($e);
-             return response(['message'=>'An error occured'],500);
-         }
-     }
+            return response(['data'=>$reserves,'message'=>'reservations fetched successfully']);
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $reserves = $this->reservation->get($id);
+
+            if(! $reserves){
+                return response(['message'=>'Error, reservation not found'],404);
+            }
+
+            return response(['data'=>$reserves,'message'=>'reservation fetched successfully']);
+
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
 
     public function create(Request $request)
     {
         $request->validate([
-            'user_id'=>'required|numeric',
-            'trip_id'=>'required|numeric',
-            'slots'=>'required|numeric'
+            'user_id'=>'required|numeric|exists:users,id',
+            'trip_id'=>'required|numeric|exists:trips,id',
+            'slots'=>'required|numeric|min:1'
         ]);
 
         $trip_id = $request->trip_id;
@@ -42,7 +60,7 @@ class ReservationController extends Controller
 
             if(! $this->reservation->tripHasAvailableSlots($trip_id, $newSpots)){
                 $availale_slots = $this->reservation->slotDetails($trip_id)['available_slots'];
-                return response(['message'=>"Error, there are $availale_slots available"]);
+                return response(['message'=>"Error, there are $availale_slots spots available"],400);
             }
 
             $reserved_spots == 0 
@@ -62,9 +80,9 @@ class ReservationController extends Controller
     public function cancle(Request $request)
     {
         $request->validate([
-            'user_id'=>'required|numeric',
-            'trip_id'=>'required|numeric',
-            'slots'=>'required|numeric'
+            'user_id'=>'required|numeric|exists:users,id',
+            'trip_id'=>'required|numeric|exists:trips,id',
+            'slots'=>'required|numeric|min:1'
         ]);
 
         $trip_id = $request->trip_id;
@@ -82,7 +100,24 @@ class ReservationController extends Controller
 
             $this->reservation->cancleReservations($trip_id,$user_id,$newSpots);
 
-            return response(['message'=>"$slot_request spots cacled successfully"]);
+            return response(['message'=>"$slot_request spots cancled successfully"]);
+        } catch (\Exception $e) {
+            info($e);
+            return response(['message'=>'An error occured'],500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            if(! $this->reservation->get($id)){
+                return response(['message'=>'Error, reservation not found'],404);
+            }
+
+            $this->reservation->delete($id);
+
+            return response(['message'=>'Reservation deleted successfully']);
+
         } catch (\Exception $e) {
             info($e);
             return response(['message'=>'An error occured'],500);
