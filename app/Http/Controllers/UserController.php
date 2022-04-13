@@ -103,7 +103,7 @@ class UserController extends Controller
                 return response(['message'=>'User not found'],404);
             }
 
-            $total = $this->user->totalReservations($id);
+            $total = $this->user->totalReservations($id) ?? 0;
 
             return response(['data'=>$total,'message'=>'Total user reservation fetched successfully']);
 

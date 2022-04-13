@@ -113,7 +113,7 @@ class UserTest extends TestCase
         $response->assertJsonStructure(['data','message']);
         $this->assertDatabaseCount('reservations',5);
 
-        $total = (new \App\Repositories\TripRepository)->totalReservations($user->id);
+        $total = (new \App\Repositories\TripRepository)->totalReservations($user->id) ?? 0;
 
         $response1->assertOk();
         $response1->assertExactJson(['data'=>$total, 'message'=>'Total user reservation fetched successfully']);

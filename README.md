@@ -1,4 +1,4 @@
-<p align="center">Trip Spots Reserations API</a></p>
+<p align="center"><h1>Trip Spots Reserations API</h1></p>
 
 ## About
 
@@ -13,33 +13,35 @@ This project use the laravel framework [documentation](https://laravel.com/docs)
 - Make sure you have php(>=8.0) installed on your system
 - Clone this repository
 - Run [php artisan test --env=testing], to run the integration tests
+- Run php artisan migrate to run the db migrations
+- Run php artisan db:seed to seed your database tables
 - Run php artisan serve, to serve the application.
 
 ## Endpoints
 
-# All Trips
-``
+## All Trips
+```bash
     curl --location --request GET 'http://localhost/api/trips' \
     --header 'Content-Type: application/json' \
-``
-# Create Trips
-``
+```
+## Create Trips
+```bash
     curl --location --request POST 'http://localhost/api/trips' \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "name": "Trip to the moon",
         "allocated_slots":10
     }'
-``
+```
 # Update Trips
-``
+```bash
     curl --location --request PUT 'http://localhost/api/trips/{id}' \
     --header 'Content-Type: application/json' \
     --data-raw '{
         "name": "Trip to the Sun",
         "allocated_slots":10
     }'
-``
+```
 # Trip reservations
 ``
     curl --location --request GET 'http://localhost/api/trips/{id}/reservations' \
